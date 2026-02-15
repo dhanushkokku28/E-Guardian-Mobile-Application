@@ -78,21 +78,36 @@ class _MapScreenState extends State<MapScreen> {
             ),
           ),
           const SizedBox(height: 12),
-          Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            children: [
-              _SummaryTile(
-                title: 'Centers',
-                value: '${_centers.length}',
-                icon: Icons.location_city_outlined,
-              ),
-              _SummaryTile(
-                title: 'Hazards',
-                value: '${_hazards.length}',
-                icon: Icons.warning_amber_outlined,
-              ),
-            ],
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final maxWidth = constraints.maxWidth;
+              final columns = maxWidth < 360
+                  ? 1
+                  : maxWidth >= 900
+                      ? 3
+                      : 2;
+              final tileWidth =
+                  (maxWidth - (columns - 1) * 12) / columns;
+
+              return Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: [
+                  _SummaryTile(
+                    width: tileWidth,
+                    title: 'Centers',
+                    value: '${_centers.length}',
+                    icon: Icons.location_city_outlined,
+                  ),
+                  _SummaryTile(
+                    width: tileWidth,
+                    title: 'Hazards',
+                    value: '${_hazards.length}',
+                    icon: Icons.warning_amber_outlined,
+                  ),
+                ],
+              );
+            },
           ),
           const SizedBox(height: 16),
           Text('Recycling centers',
@@ -124,11 +139,13 @@ class _MapScreenState extends State<MapScreen> {
 class _SummaryTile extends StatelessWidget {
   const _SummaryTile({
     Key? key,
+    required this.width,
     required this.title,
     required this.value,
     required this.icon,
   }) : super(key: key);
 
+  final double width;
   final String title;
   final String value;
   final IconData icon;
@@ -136,7 +153,7 @@ class _SummaryTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: (MediaQuery.of(context).size.width - 44) / 2,
+      width: width,
       child: Card(
         child: Padding(
           padding: const EdgeInsets.all(12),

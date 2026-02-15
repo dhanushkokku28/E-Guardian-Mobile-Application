@@ -91,26 +91,42 @@ class _DashboardScreenState extends State<DashboardScreen> {
           const SizedBox(height: 16),
           Text('Summary', style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 12),
-          Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            children: [
-              _StatTile(
-                title: 'Total devices',
-                value: '${stats['totalDevices'] ?? 0}',
-                icon: Icons.devices,
-              ),
-              _StatTile(
-                title: 'High hazard',
-                value: '${stats['highHazardDevices'] ?? 0}',
-                icon: Icons.warning_amber_outlined,
-              ),
-              _StatTile(
-                title: 'CO2 saved (kg)',
-                value: '${stats['co2Saved'] ?? 0}',
-                icon: Icons.eco_outlined,
-              ),
-            ],
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final maxWidth = constraints.maxWidth;
+              final columns = maxWidth < 360
+                  ? 1
+                  : maxWidth >= 900
+                      ? 3
+                      : 2;
+              final tileWidth =
+                  (maxWidth - (columns - 1) * 12) / columns;
+
+              return Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: [
+                  _StatTile(
+                    width: tileWidth,
+                    title: 'Total devices',
+                    value: '${stats['totalDevices'] ?? 0}',
+                    icon: Icons.devices,
+                  ),
+                  _StatTile(
+                    width: tileWidth,
+                    title: 'High hazard',
+                    value: '${stats['highHazardDevices'] ?? 0}',
+                    icon: Icons.warning_amber_outlined,
+                  ),
+                  _StatTile(
+                    width: tileWidth,
+                    title: 'CO2 saved (kg)',
+                    value: '${stats['co2Saved'] ?? 0}',
+                    icon: Icons.eco_outlined,
+                  ),
+                ],
+              );
+            },
           ),
           const SizedBox(height: 16),
           Text('Recent scans', style: Theme.of(context).textTheme.titleMedium),
@@ -133,11 +149,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
 class _StatTile extends StatelessWidget {
   const _StatTile({
     Key? key,
+    required this.width,
     required this.title,
     required this.value,
     required this.icon,
   }) : super(key: key);
 
+  final double width;
   final String title;
   final String value;
   final IconData icon;
@@ -145,7 +163,7 @@ class _StatTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: (MediaQuery.of(context).size.width - 44) / 2,
+      width: width,
       child: Card(
         child: Padding(
           padding: const EdgeInsets.all(12),
@@ -209,7 +227,11 @@ class _RecentScanCard extends StatelessWidget {
                 image: imageUrl == null
                     ? null
                     : DecorationImage(
-                        image: NetworkImage(imageUrl!),
+                        image: ResizeImage(
+                          NetworkImage(imageUrl!),
+                          width: 112,
+                          height: 112,
+                        ),
                         fit: BoxFit.cover,
                       ),
               ),
