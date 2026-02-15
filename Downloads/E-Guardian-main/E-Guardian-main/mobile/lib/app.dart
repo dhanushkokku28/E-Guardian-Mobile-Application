@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'screens/login_screen.dart';
 import 'screens/main_shell.dart';
 import 'state/session_controller.dart';
+import 'theme/app_theme.dart';
 
 class AppRoot extends StatefulWidget {
   const AppRoot({Key? key}) : super(key: key);
@@ -30,10 +31,7 @@ class _AppRootState extends State<AppRoot> {
         builder: (context, _) {
           return MaterialApp(
             title: 'E-Guardian',
-            theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-              useMaterial3: true,
-            ),
+            theme: AppTheme.lightTheme,
             home: FutureBuilder<void>(
               future: _initFuture,
               builder: (context, snapshot) {
